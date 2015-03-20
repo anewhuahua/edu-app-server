@@ -99,12 +99,46 @@ router.route('/chats/:from/:to')
     res.json({ message: 'chats from '+ req.params.from + ' to '+ req.params.to +' create successfully'});
   });
 
-router.route('/chats/:from/:to/last')
+router.route('/chats/:from/:to/last')  // from=me, to=friend
   .get(function(req, res) {
+    var last = 0;
+    var returnChat = {"friend": req.params.to, "time": 0};
     user = new User({name: req.params.to});
     user.getLastChatFrom(req.params.from, function(err, chats){
-      res.json(chats); 
+      // res.json(chats); 
+      if (chats && chats[0]) {
+        d = new Date(chats[0].time);
+        if(d.getTime()>last){
+          returnChat = {"message": chats[0].message, "from": chats[0].from, "to": chats[0].to, "friend":req.params.to, "time":chats[0].time};
+          if (last>0)
+            res.json(returnChat);
+          last = d.getTime();
+        }
+      } else {
+        if (last>0)
+           res.json(returnChat);
+        last = 1;
+      }
+      
     });
+    user = new User({name: req.params.from});
+    user.getLastChatFrom(req.params.to, function(err, chats){
+      // res.json(chats); 
+      if (chats && chats[0]) {
+        d = new Date(chats[0].time);
+        if(d.getTime()>last){
+          returnChat = {"message": chats[0].message, "from": chats[0].from, "to": chats[0].to, "friend":req.params.to, "time":chats[0].time};
+          if (last>0)
+            res.json(returnChat);
+          last = d.getTime();
+        }
+      } else {
+        if (last>0)
+           res.json(returnChat);
+        last = 1;
+      }
+    });
+    // async
   });
 
 app.use('/api', router);
