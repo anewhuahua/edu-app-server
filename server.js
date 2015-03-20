@@ -1,3 +1,4 @@
+var path = require('path');
 var express    = require('express');
 var bodyParser = require('body-parser');
 var app        = express();
@@ -77,6 +78,37 @@ router.route('/users/:user_name/friends')
     res.json({ message: 'friends '+ req.params.user_name + ' create successfully'});
   });
 
+router.route('/chats/:from/:to')
+  .get(function(req, res) {
+    user = new User({name: req.params.to});
+    user.getChatsFrom(req.params.from, function(err, chats){
+      res.json(chats); 
+    });
+  })
+  .post(function(req, res) {
+    user = new User({name: req.params.from});
+    chats = req.body.chats;
+    for (var i=0;i<chats.length;i++) {
+      console.log(chats[i]);
+      user.addChatsTo(req.params.to, chats[i], function(err) {
+			  if (err)
+				  console.log(err);
+	   });
+    }
+    
+    res.json({ message: 'chats from '+ req.params.from + ' to '+ req.params.to +' create successfully'});
+  });
+
+router.route('/chats/:from/:to/last')
+  .get(function(req, res) {
+    user = new User({name: req.params.to});
+    user.getLastChatFrom(req.params.from, function(err, chats){
+      res.json(chats); 
+    });
+  });
+
 app.use('/api', router);
+app.use(express.static(path.join(__dirname, 'profile')));
+
 app.listen(port);
 console.log('magic happens on port ' + port);
