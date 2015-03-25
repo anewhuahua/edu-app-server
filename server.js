@@ -109,7 +109,7 @@ router.route('/chats/:from/:to/last')  // from=me, to=friend
       if (chats && chats[0]) {
         d = new Date(chats[0].time);
         if(d.getTime()>last){
-          returnChat = {"message": chats[0].message, "from": chats[0].from, "to": chats[0].to, "friend":req.params.to, "time":chats[0].time};
+          returnChat = {"message": chats[0].message, "from": chats[0].from, "to": chats[0].to, "friend":req.params.to, "time":d.getTime()};
           if (last>0)
             res.json(returnChat);
           last = d.getTime();
@@ -127,7 +127,7 @@ router.route('/chats/:from/:to/last')  // from=me, to=friend
       if (chats && chats[0]) {
         d = new Date(chats[0].time);
         if(d.getTime()>last){
-          returnChat = {"message": chats[0].message, "from": chats[0].from, "to": chats[0].to, "friend":req.params.to, "time":chats[0].time};
+          returnChat = {"message": chats[0].message, "from": chats[0].from, "to": chats[0].to, "friend":req.params.to, "time":d.getTime()};
           if (last>0)
             res.json(returnChat);
           last = d.getTime();
