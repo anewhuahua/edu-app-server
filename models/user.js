@@ -16,6 +16,7 @@ userSchema.statics.findByName = function (name, cb) {
   this.findOne({name:name}, cb);
 }
 
+
 // fiends
 userSchema.methods.getFriends = function(cb) {
   Friend.getFriends(this.name, cb);

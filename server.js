@@ -6,6 +6,8 @@ var app        = express();
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/test');
 var User = require('./models/user');
+var Chat = require('./models/chat');
+
 var port     = process.env.PORT || 8080; 
 var router = express.Router();
 
@@ -98,7 +100,7 @@ router.route('/chats/:from/:to')
     
     res.json({ message: 'chats from '+ req.params.from + ' to '+ req.params.to +' create successfully'});
   });
-
+/*
 router.route('/chats/:from/:to/last')  // from=me, to=friend
   .get(function(req, res) {
     var last = 0;
@@ -140,6 +142,20 @@ router.route('/chats/:from/:to/last')  // from=me, to=friend
     });
     // async
   });
+*/
+
+router.route('/chats/:from/:to/last')  // from=me, to=friend
+  .get(function(req, res) {
+    Chat.getLastMsg(req.params.from, req.params.to, function(err, chats) {
+      if (chats && chats[0]) {
+        console.log(chats[0]);
+        d = new Date(chats[0].time);
+        returnChat = {"message": chats[0].message, "from": chats[0].from, "to": chats[0].to, "friend":req.params.to, "time":d.getTime()};
+        res.json(returnChat);
+      }
+    });
+  });
+  
 
 app.use('/api', router);
 app.use(express.static(path.join(__dirname, 'profile')));
